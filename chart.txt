@@ -1,0 +1,69 @@
+<?php
+			if($sdate==$fdate){
+			
+			}else{
+
+
+$dbhandle= new mysqli('localhost','root','','infosa-2010');
+echo $dbhandle->connect_error;
+
+
+$query=mysqli_query($dbhandle,"SELECT count(attendance_status) AS total FROM attendance where attendance_status = 'Present' AND sid='$sid' AND course='$course' AND semsec='$semsec' AND date BETWEEN '$sdate' AND '$fdate'");
+$result = mysqli_fetch_array($query);
+ $present = $result['total'];
+ 
+
+ 
+  $query1=mysqli_query($dbhandle,"SELECT count(attendance_status) AS total FROM attendance where attendance_status = 'Absent' AND sid='$sid' AND course='$course' AND semsec='$semsec' AND date BETWEEN '$sdate' AND '$fdate'");
+$result1 = mysqli_fetch_array($query1);
+  $absent = $result1['total'];
+  
+   $query2=mysqli_query($dbhandle,"SELECT count(attendance_status) AS total FROM attendance where attendance_status = 'Late' AND sid='$sid' AND course='$course' AND semsec='$semsec' AND date BETWEEN '$sdate' AND '$fdate'");
+$result2 = mysqli_fetch_array($query2);
+  $late = $result2['total'];
+  
+   $query3=mysqli_query($dbhandle,"SELECT count(attendance_status) AS total FROM attendance where attendance_status = 'Permission' AND sid='$sid' AND course='$course' AND semsec='$semsec' AND date BETWEEN '$sdate' AND '$fdate'");
+$result3 = mysqli_fetch_array($query3);
+  $permission = $result3['total'];
+
+?>
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var present = <?php echo $present; ?>;
+	    var absent = <?php echo $absent; ?>;
+	    var late = <?php echo $late; ?>;
+	    var permission = <?php echo $permission; ?>;
+        var data = google.visualization.arrayToDataTable([
+          ['Attendance','number_of_attendance' ],
+		  ['Present', present],
+		  ['Absent',  absent],
+		  ['Late', late],
+		  ['Permission', permission]
+       
+        ]);
+
+        var options = {
+          title: 'Attendance Status',
+		  is3D:true,
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="piechart" piechart:  display: block margin: 0 auto style="width: auto; height: 500px;"></div>
+  </body>
+</html>
+<?php
+}
+?>
+ </div>
